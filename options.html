@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>UDeNav 新标签页 · 设置</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(1200px 700px at 30% 20%, #26314d, #10131a 70%);
+    color: #e8eaf0; font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+  }
+  .card {
+    width: 460px; padding: 30px 28px; border-radius: 16px;
+    background: rgba(255, 255, 255, .05); border: 1px solid rgba(255, 255, 255, .1);
+  }
+  h1 { font-size: 19px; margin-bottom: 6px; }
+  p.desc { font-size: 12.5px; color: #9aa1b2; line-height: 1.7; margin-bottom: 16px; }
+  label { display: block; font-size: 12.5px; color: #9aa1b2; margin: 12px 0 6px; }
+  input[type="text"] {
+    width: 100%; padding: 10px 12px; border-radius: 9px; font-size: 13.5px;
+    border: 1px solid rgba(255, 255, 255, .16); background: rgba(255, 255, 255, .07);
+    color: #fff; outline: 0;
+  }
+  input[type="text"]:focus { border-color: #5b8cff; }
+  .modes { display: flex; gap: 10px; margin-top: 4px; }
+  .modes label {
+    flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px;
+    margin: 0; padding: 10px 0; border-radius: 9px; cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, .14); font-size: 13px; color: #c6ccd9;
+  }
+  .modes label:has(input:checked) { border-color: #5b8cff; background: rgba(91, 140, 255, .12); color: #fff; }
+  .row { display: flex; gap: 10px; margin-top: 18px; align-items: center; }
+  button.act {
+    flex: 1; padding: 10px 0; border: 0; border-radius: 9px; cursor: pointer;
+    font-size: 14px; background: #5b8cff; color: #fff;
+  }
+  button.ghost { padding: 10px 16px; border: 0; border-radius: 9px; cursor: pointer; font-size: 13px; background: rgba(255,255,255,.08); color: #c6ccd9; }
+  .hint { font-size: 11.5px; color: #7c8496; margin-top: 14px; line-height: 1.7; }
+  .ok { color: #7be0a2; font-size: 12.5px; margin-left: 10px; display: none; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>UDeNav 新标签页</h1>
+    <p class="desc">设置新标签页打开的导航站。保存后新建标签页立即生效。</p>
+    <label>导航站地址</label>
+    <input type="text" id="url" placeholder="https://你的导航域名">
+    <label>打开方式</label>
+    <div class="modes">
+      <label><input type="radio" name="mode" value="embed">内嵌（推荐）</label>
+      <label><input type="radio" name="mode" value="redirect">跳转</label>
+    </div>
+    <div class="row">
+      <button class="act" id="save">保存</button>
+      <button class="ghost" id="test">打开导航站测试</button>
+      <span class="ok" id="ok">已保存 ✓</span>
+    </div>
+    <div class="hint">· 内嵌模式：新标签页地址栏不变、无跳转闪动；个别站点禁止被内嵌时会出现空白，切换为「跳转」即可。<br>· 「启动浏览器时打开导航」不用扩展也能设：Edge 设置 → 开始、主页和新建标签页 → 启动时打开特定网页。</div>
+  </div>
+<!-- MV3 扩展页面 CSP 禁止内联 script，脚本必须外链（options.js） -->
+<script src="options.js"></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "UDeNav 新标签页",
+  "version": "1.1.1",
+  "description": "把你的导航站设为新标签页：新建标签页直达导航，支持内嵌/跳转两种模式与自定义地址；点工具栏图标直达导航站。",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "打开导航站",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "permissions": ["storage"]
+}

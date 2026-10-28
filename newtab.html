@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>新标签页</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; background: #10131a; overflow: hidden; }
+  iframe { display: block; width: 100%; height: 100%; border: 0; }
+
+  /* 齿轮按钮：平时半透明，悬停才浮出来 */
+  #gear {
+    position: fixed; right: 14px; bottom: 14px; z-index: 30;
+    width: 34px; height: 34px; border: 0; border-radius: 50%;
+    background: rgba(255, 255, 255, .1); color: rgba(255, 255, 255, .75);
+    font-size: 17px; cursor: pointer; opacity: 0; transition: opacity .2s, background .2s;
+    backdrop-filter: blur(4px);
+  }
+  body:hover #gear { opacity: .55; }
+  #gear:hover { opacity: 1 !important; background: rgba(255, 255, 255, .2); }
+
+  /* 设置面板 */
+  #panel {
+    position: fixed; z-index: 40; right: 14px; bottom: 56px; width: 340px;
+    background: rgba(24, 27, 36, .96); border: 1px solid rgba(255, 255, 255, .1);
+    border-radius: 14px; padding: 18px; color: #e8eaf0;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, .5); backdrop-filter: blur(10px);
+    display: none;
+  }
+  #panel.open { display: block; }
+  #panel h3 { font-size: 14px; font-weight: 600; margin-bottom: 12px; }
+  #panel label { display: block; font-size: 12px; color: #9aa1b2; margin: 10px 0 5px; }
+  #panel input[type="text"] {
+    width: 100%; padding: 8px 10px; border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, .14); background: rgba(255, 255, 255, .06);
+    color: #e8eaf0; font-size: 13px; outline: 0;
+  }
+  #panel input[type="text"]:focus { border-color: #5b8cff; }
+  .modes { display: flex; gap: 8px; margin-top: 4px; }
+  .modes label {
+    flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+    margin: 0; padding: 8px 0; border-radius: 8px; cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, .14); font-size: 12.5px; color: #c6ccd9;
+  }
+  .modes label:has(input:checked) { border-color: #5b8cff; background: rgba(91, 140, 255, .12); color: #fff; }
+  #panel .row-btn { display: flex; gap: 8px; margin-top: 14px; }
+  #panel button.act {
+    flex: 1; padding: 8px 0; border: 0; border-radius: 8px; cursor: pointer;
+    font-size: 13px; background: #5b8cff; color: #fff;
+  }
+  #panel button.ghost { background: rgba(255, 255, 255, .08); color: #c6ccd9; }
+  #panel .hint { font-size: 11px; color: #7c8496; margin-top: 10px; line-height: 1.6; }
+
+  /* 首次使用的设置卡片 */
+  #setup {
+    position: fixed; inset: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(1200px 700px at 30% 20%, #26314d, #10131a 70%);
+  }
+  #setup .card {
+    width: 420px; padding: 30px 28px; border-radius: 16px;
+    background: rgba(255, 255, 255, .05); border: 1px solid rgba(255, 255, 255, .1);
+  }
+  #setup h2 { font-size: 18px; color: #fff; margin-bottom: 6px; }
+  #setup p { font-size: 12.5px; color: #9aa1b2; line-height: 1.7; margin-bottom: 14px; }
+  #setup input {
+    width: 100%; padding: 10px 12px; border-radius: 9px; font-size: 13.5px;
+    border: 1px solid rgba(255, 255, 255, .16); background: rgba(255, 255, 255, .07);
+    color: #fff; outline: 0;
+  }
+  #setup button {
+    width: 100%; margin-top: 12px; padding: 10px 0; border: 0; border-radius: 9px;
+    background: #5b8cff; color: #fff; font-size: 14px; cursor: pointer;
+  }
+  #setup .err { color: #ff8a80; font-size: 12px; margin-top: 8px; display: none; }
+
+  /* 跳转模式的提示条 */
+  #rd {
+    position: fixed; z-index: 60; left: 50%; bottom: 26px; transform: translateX(-50%);
+    padding: 8px 16px; border-radius: 20px; font-size: 12.5px;
+    background: rgba(24, 27, 36, .9); color: #c6ccd9; border: 1px solid rgba(255, 255, 255, .12);
+    display: none; white-space: nowrap;
+  }
+  #rd a { color: #7ea4ff; cursor: pointer; margin-left: 10px; }
+</style>
+</head>
+<body>
+
+<!-- 内嵌模式的载体 -->
+<iframe id="frame" title="nav" style="display:none"></iframe>
+
+<!-- 跳转模式的提示条（Esc 可取消本次跳转） -->
+<div id="rd">即将跳转到 <span id="rd-url"></span>…<a id="rd-cancel">取消并设置</a></div>
+
+<button id="gear" title="设置">⚙</button>
+
+<div id="panel">
+  <h3>新标签页设置</h3>
+  <label>导航站地址</label>
+  <input type="text" id="p-url" placeholder="https://你的导航域名">
+  <label>打开方式</label>
+  <div class="modes">
+    <label><input type="radio" name="mode" value="embed">内嵌（推荐）</label>
+    <label><input type="radio" name="mode" value="redirect">跳转</label>
+  </div>
+  <div class="row-btn">
+    <button class="act" id="p-save">保存</button>
+    <button class="ghost" id="p-close">关闭</button>
+  </div>
+  <div class="hint">内嵌模式若长时间空白或提示被拒绝（个别站点禁止被嵌入），切换为「跳转」即可。改动只影响本浏览器的新标签页。</div>
+</div>
+
+<!-- 首次使用 -->
+<div id="setup" style="display:none">
+  <div class="card">
+    <h2>设置你的导航站</h2>
+    <p>填入导航站地址后，以后每次打开新标签页都会直达它。地址可以随时点右下角 ⚙ 修改。</p>
+    <input type="text" id="s-url" placeholder="https://你的导航域名">
+    <div class="err" id="s-err">地址要以 http:// 或 https:// 开头</div>
+    <button id="s-go">保存并打开</button>
+  </div>
+</div>
+
+<!-- MV3 扩展页面 CSP 禁止内联 script，脚本必须外链（newtab.js） -->
+<script src="newtab.js"></script>
+</body>
+</html>

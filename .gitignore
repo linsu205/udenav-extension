@@ -1,0 +1,3 @@
+*.zip
+tools/*.png
+tools/e2e-out.txt

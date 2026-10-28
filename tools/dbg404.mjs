@@ -1,0 +1,10 @@
+import { createRequire } from 'node:module';
+const require = createRequire('C:/Users/15602/.workbuddy/binaries/node/workspace/node_modules/');
+const puppeteer = require('puppeteer-core');
+const browser = await puppeteer.launch({ executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe', headless: 'new' });
+const page = await browser.newPage();
+page.on('response', r => { if (r.status() >= 400) console.log('HTTP', r.status(), r.url()); });
+await page.goto('http://127.0.0.1:8814/options.html', { waitUntil: 'networkidle2' });
+await page.goto('http://127.0.0.1:8814/newtab.html', { waitUntil: 'networkidle2' });
+await new Promise(r => setTimeout(r, 1500));
+await browser.close();
