@@ -40,7 +40,9 @@ function applyBgToBoot(bg) {
     const mv = (bg.maskV == null ? 0.2 : bg.maskV);
     const tint = bg.isDark ? `rgba(0,0,0,${mv})` : `rgba(255,255,255,${mv})`;
     const img = `url("${String(bg.url).replace(/"/g, '')}")`;
-    boot.style.background = `linear-gradient(${tint},${tint}), ${img} center / cover no-repeat fixed`;
+    // 注意：不要加 fixed。#boot 本就 fixed;inset:0 铺满视口，center/cover 足够；
+    // 带 fixed 的背景在 opacity 淡出动画时会错位出重影（Chrome 已知 bug）。
+    boot.style.background = `linear-gradient(${tint},${tint}), ${img} center / cover no-repeat`;
   } else {
     boot.style.background = '';
   }
