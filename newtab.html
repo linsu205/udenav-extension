@@ -11,24 +11,17 @@
   html[data-xtheme="light"], html[data-xtheme="light"] body { background: linear-gradient(160deg,#f4f7fa 0%,#eaeff3 55%,#f1f5f8 100%); }
   iframe { display: block; width: 100%; height: 100%; border: 0; }
 
-  /* 加载遮罩：内嵌页就绪前盖住 iframe 的 about:blank，显示项目 logo 呼吸显隐（类 noteplus） */
+  /* 加载遮罩：iframe 就绪前盖住 about:blank 黑屏，仅作壁纸兜底；
+     加载指示交给 iframe 内的 UDeNav 骨架屏（全场景统一，logo 呼吸方案已弃用）。 */
   #boot {
     position: fixed; inset: 0; z-index: 20;
-    display: none; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+    display: none;
     background: linear-gradient(155deg,#262c36 0%,#1c2027 42%,#272e38 100%);
-    color: #c7ccd6; transition: opacity .5s ease;
+    transition: opacity .5s ease;
   }
-  #boot.show { display: flex; }
+  #boot.show { display: block; }
   #boot.hide { opacity: 0; pointer-events: none; }
-  #boot .logo {
-    width: 32px; height: 32px; border-radius: 8px; object-fit: contain;
-    animation: xt-breathe 1.8s ease-in-out infinite;
-    filter: drop-shadow(0 2px 8px rgba(0,0,0,.35));
-  }
-  @keyframes xt-breathe { 0%,100% { opacity: .3; transform: scale(.94); } 50% { opacity: 1; transform: scale(1); } }
   html[data-xtheme="light"] #boot { background: linear-gradient(160deg,#f4f7fa 0%,#eaeff3 55%,#f1f5f8 100%); }
-  html[data-xtheme="light"] #boot .logo { filter: drop-shadow(0 6px 18px rgba(0,0,0,.18)); }
-  @media (prefers-reduced-motion: reduce) { #boot .logo { animation: none; opacity: .9; } }
 
   /* 齿轮按钮：平时半透明，悬停才浮出来 */
   #gear {
@@ -111,10 +104,8 @@
 <!-- 内嵌模式的载体 -->
 <iframe id="frame" title="nav" style="display:none"></iframe>
 
-<!-- 加载遮罩：内嵌页就绪前覆盖 iframe 的 about:blank，显示项目 logo 呼吸显隐 -->
-<div id="boot">
-  <img class="logo" src="icons/icon128.png" alt="UDeNav">
-</div>
+<!-- 加载遮罩：iframe 就绪前覆盖 about:blank 黑屏，仅作壁纸兜底；加载指示由 iframe 内骨架屏接管 -->
+<div id="boot"></div>
 
 <!-- 跳转模式的提示条（Esc 可取消本次跳转） -->
 <div id="rd">即将跳转到 <span id="rd-url"></span>…<a id="rd-cancel">取消并设置</a></div>
@@ -134,7 +125,7 @@
     <button class="act" id="p-save">保存</button>
     <button class="ghost" id="p-close">关闭</button>
   </div>
-  <div class="hint">内嵌模式直接把导航站嵌在当前深色页里，加载期间显示项目 logo 呼吸动画、无黑屏；个别站点禁止被嵌入时才改用「跳转」（跳转会经历一次浏览器空白页，可能闪一下黑）。</div>
+  <div class="hint">内嵌模式直接把导航站嵌在当前深色页里，加载期间由导航站骨架屏接管、无黑屏；个别站点禁止被嵌入时才改用「跳转」（跳转会经历一次浏览器空白页，可能闪一下黑）。</div>
 </div>
 
 <!-- 首次使用 -->
