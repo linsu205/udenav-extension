@@ -35,13 +35,30 @@ async function render() {
   $('#setup').style.display = 'none';
   if (cfg.mode === 'redirect') {
     $('#frame').style.display = 'none';
+    $('#boot').classList.remove('show');
     $('#rd-url').textContent = cfg.url;
     $('#rd').style.display = 'block';
     redirectTimer = setTimeout(() => location.replace(cfg.url), 700);
   } else {
     const f = $('#frame');
+    const boot = $('#boot');
     f.style.display = 'block';
-    if (f.src !== cfg.url) f.src = cfg.url;
+    // 加载遮罩盖住 iframe 的 about:blank 黑屏，等内嵌页真正就绪再淡出
+    boot.classList.remove('hide');
+    boot.classList.add('show');
+    const settleBoot = () => {
+      setTimeout(() => {
+        boot.classList.add('hide');
+        setTimeout(() => boot.classList.remove('show'), 520);
+      }, 240);
+    };
+    if (f.getAttribute('data-url') !== cfg.url) {
+      f.onload = settleBoot;
+      f.src = cfg.url;
+      f.setAttribute('data-url', cfg.url);
+    } else {
+      settleBoot();
+    }
   }
 }
 
